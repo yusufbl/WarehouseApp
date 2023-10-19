@@ -1,0 +1,39 @@
+@page "/add/4"
+@using DataServices.Data
+@inject ICompany ICompany
+@inject NavigationManager NavigationManager
+
+<h3>Add Company</h3>
+
+@code {
+    private CompanyInfo company = new CompanyInfo();
+
+    private async Task SaveCompany()
+    {
+        await ICompany.AddCompanyAsync(company);
+        NavigationManager.NavigateTo("/add");
+    }
+}
+
+<div class="form-group">
+    <label for="companyId">Company Id:</label>
+    <input id="companyId" class="form-control" @bind="company.CompanyId">
+</div>
+
+<div class="form-group">
+    <label for="companyName">Company Name:</label>
+    <input id="companyName" class="form-control" @bind="company.CompanyName">
+</div>
+
+<div class="form-group">
+    <label for="taxOfficeId">Tax Office ID:</label>
+    <input id="taxOfficeId" class="form-control" @bind="company.TaxOfficeId">
+</div>
+
+<div class="form-group">
+    <label for="countryCode">Country Code:</label>
+    <input id="countryCode" class="form-control" @bind="company.CountryCode">
+</div>
+
+<button class="btn btn-primary" @onclick="SaveCompany">Save</button>
+

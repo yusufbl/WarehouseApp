@@ -1,0 +1,98 @@
+@page "/hallway-row-table"
+@using DataServices.Data
+@using Microsoft.AspNetCore.Components
+@inject IHallwayRow HallwayRowService
+
+<PageTitle>Hallway Row Table</PageTitle>
+
+<h1>Hallway Row Table</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Warehouse Id</th>
+            <th>Hallway Id</th>
+            <th>Row Id</th>
+             <th>Actions</th> 
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hallwayRow in HallwayRows)
+        {
+            <tr>
+                <td>@hallwayRow.WarehouseId</td>
+                <td>@hallwayRow.HallwayId</td>
+                <td>@hallwayRow.RowNo</td>
+                 <td>
+                    <button class="btn btn-danger" @onclick="() => EditHallwayRow(hallwayRow)">Edit</button>
+                    <button class="btn btn-warning" @onclick="() => DeleteHallwayRow(hallwayRow.RowNo)">Delete</button>
+                </td> 
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (EditHallwayRowInfo != null)
+{
+    <h2>Edit Hallway Row</h2>
+    <form @onsubmit="UpdateHallwayRow">
+        <div class="form-group">
+            <label for="editWarehouseId">Warehouse ID:</label>
+            <input type="text" class="form-control" id="editWarehouseId" @bind="EditHallwayRowInfo.WarehouseId" required />
+        </div>
+        <div class="form-group">
+            <label for="editHallwayId">Hallway ID:</label>
+            <input type="text" class="form-control" id="editHallwayId" @bind="EditHallwayRowInfo.HallwayId" required />
+        </div>
+        <div class="form-group">
+            <label for="editRowNo">Row ID:</label>
+            <input type="text" class="form-control" id="editRowNo" @bind="EditHallwayRowInfo.RowNo" readonly />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+        </div>
+    </form>
+}
+
+@code {
+    List<HallwayRowInfo> HallwayRows { get; set; }
+    HallwayRowInfo EditHallwayRowInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HallwayRows = await HallwayRowService.GetHallwayRowAsync();
+    }
+
+    void EditHallwayRow(HallwayRowInfo hallwayRow)
+    {
+        EditHallwayRowInfo = hallwayRow;
+    }
+
+    async Task UpdateHallwayRow()
+    {
+        if (EditHallwayRowInfo != null)
+        {
+            bool success = await HallwayRowService.UpdateHallwayRowAsync(EditHallwayRowInfo);
+            if (success)
+            {
+                HallwayRows = await HallwayRowService.GetHallwayRowAsync();
+                EditHallwayRowInfo = null;
+            }
+        }
+    }
+
+    void CancelEdit()
+    {
+        EditHallwayRowInfo = null;
+    }
+
+    async Task DeleteHallwayRow(string rowNo)
+    {
+        bool success = await HallwayRowService.DeleteHallwayRowAsync(rowNo);
+        if (success)
+        {
+            HallwayRows = await HallwayRowService.GetHallwayRowAsync();
+        }
+    }
+}

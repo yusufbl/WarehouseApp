@@ -1,0 +1,93 @@
+@page "/hallway-table"
+@using DataServices.Data
+@using Microsoft.AspNetCore.Components
+@inject IHallway HallwayService
+@using DataServices.Data
+
+<PageTitle>Hallway Table</PageTitle>
+
+<h1>Hallway Table</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Warehouse Id</th>
+            <th>Hallway Id</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hallway in Hallways)
+        {
+            <tr>
+                <td>@hallway.WarehouseId</td>
+                <td>@hallway.HallwayId</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => EditHallway(hallway)">Edit</button>
+                    <button class="btn btn-warning" @onclick="() => DeleteHallway(hallway.HallwayId)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (EditHallwayInfo != null)
+{
+    <h2>Edit Hallway</h2>
+    <form @onsubmit="UpdateHallway">
+        <div class="form-group">
+            <label for="editWarehouseId">Warehouse ID:</label>
+            <input type="text" class="form-control" id="editWarehouseId" @bind="EditHallwayInfo.WarehouseId" required />
+        </div>
+        <div class="form-group">
+            <label for="editHallwayId">Hallway ID:</label>
+            <input type="text" class="form-control" id="editHallwayId" @bind="EditHallwayInfo.HallwayId" readonly />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+        </div>
+    </form>
+}
+
+@code {
+    List<HallwayInfo> Hallways { get; set; }
+    HallwayInfo EditHallwayInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Hallways = await HallwayService.GetHallwayAsync();
+    }
+
+    void EditHallway(HallwayInfo hallway)
+    {
+        EditHallwayInfo = hallway;
+    }
+
+    async Task UpdateHallway()
+    {
+        if (EditHallwayInfo != null)
+        {
+            bool success = await HallwayService.UpdateHallwayAsync(EditHallwayInfo);
+            if (success)
+            {
+                Hallways = await HallwayService.GetHallwayAsync();
+                EditHallwayInfo = null;
+            }
+        }
+    }
+
+    void CancelEdit()
+    {
+        EditHallwayInfo = null;
+    }
+
+    async Task DeleteHallway(string hallwayId)
+    {
+        bool success = await HallwayService.DeleteHallwayAsync(hallwayId);
+        if (success)
+        {
+            Hallways = await HallwayService.GetHallwayAsync();
+        }
+    }
+}

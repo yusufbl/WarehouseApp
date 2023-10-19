@@ -1,0 +1,29 @@
+@page "/add/5"
+@inject NavigationManager NavigationManager
+@using DataServices.Data
+@inject IHallway IHallway
+
+<h3>Add Hallway Row</h3>
+
+@code {
+    private HallwayInfo hallway = new HallwayInfo();
+
+    private async Task SaveHallway()
+    {
+        await IHallway.AddHallwayAsync(hallway);
+        NavigationManager.NavigateTo("/add");
+    }
+}
+
+<div class="form-group">
+    <label for="warehouseId">Warehouse ID:</label>
+    <input id="warehouseId" class="form-control" @bind="hallway.WarehouseId">
+</div>
+
+<div class="form-group">
+    <label for="hallwayId">Hallway ID:</label>
+    <input id="hallwayId" class="form-control" @bind="hallway.HallwayId">
+</div>
+
+<button class="btn btn-primary" @onclick="SaveHallway">Save</button>
+

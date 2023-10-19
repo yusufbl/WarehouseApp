@@ -1,0 +1,34 @@
+@page "/add/3"
+@inject NavigationManager NavigationManager
+@using DataServices.Data
+@inject ICountry ICountry
+
+<h3>Add Country</h3>
+
+@code {
+    private CountryInfo country = new CountryInfo();
+
+    private async Task SaveCountry()
+    {
+        await ICountry.AddCountryAsync(country);
+        NavigationManager.NavigateTo("/add");
+    }
+}
+
+<div class="form-group">
+    <label for="countryCode">Country Code:</label>
+    <input id="countryCode" class="form-control" @bind="country.CountryCode">
+</div>
+
+<div class="form-group">
+    <label for="countryName">Country Name:</label>
+    <input id="countryName" class="form-control" @bind="country.CountryName">
+</div>
+
+<div class="form-group">
+    <label for="isActive">Is Active:</label>
+    <input id="isActive" type="checkbox" class="form-control" @bind="country.IsActive">
+</div>
+
+<button class="btn btn-primary" @onclick="SaveCountry">Save</button>
+

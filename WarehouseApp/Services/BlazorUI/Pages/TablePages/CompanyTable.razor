@@ -1,0 +1,112 @@
+@page "/company-table"
+@using Mer.Data.Core.Models
+@using System.Collections.Generic
+@inject ICompany CompanyService
+@inject IJSRuntime JSRuntime
+@using DataServices.Data
+
+<PageTitle>Company Table</PageTitle>
+
+<h1>Company Table</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Company Id</th>
+            <th>Company Name</th>
+            <th>Tax Office Id</th>
+            <th>Country Code</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var company in Companies)
+        {
+            <tr>
+                <td>@company.CompanyId</td>
+                <td>@company.CompanyName</td>
+                <td>@company.TaxOfficeId</td>
+                <td>@company.CountryCode</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => EditCompany(company)">Edit</button>
+                    <button class="btn btn-warning" @onclick="() => DeleteCompany(company.CompanyId)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (EditCompanyInfo != null)
+{
+    <h2>Edit Company</h2>
+    <form @onsubmit="UpdateCompany">
+        <div class="form-group">
+            <label for="editCompanyId">Company ID:</label>
+            <input type="text" class="form-control" id="editCompanyId" @bind="EditCompanyInfo.CompanyId" readonly />
+        </div>
+        <div class="form-group">
+            <label for="editCompanyName">Company Name:</label>
+            <input type="text" class="form-control" id="editCompanyName" @bind="EditCompanyInfo.CompanyName" required />
+        </div>
+        <div class="form-group">
+            <label for="editTaxOfficeId">Tax Office ID:</label>
+            <input type="text" class="form-control" id="editTaxOfficeId" @bind="EditCompanyInfo.TaxOfficeId" readonly />
+        </div>
+        <div class="form-group">
+            <label for="editCountryCode">Country Code:</label>
+            <input type="text" class="form-control" id="editCountryCode" @bind="EditCompanyInfo.CountryCode" required />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+        </div>
+    </form>
+}
+
+@code {
+    List<CompanyInfo> Companies { get; set; }
+    CompanyInfo EditCompanyInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Companies = await CompanyService.GetCompanyAsync();
+    }
+
+    void EditCompany(CompanyInfo company)
+    {
+        EditCompanyInfo = company;
+    }
+
+    async Task UpdateCompany()
+    {
+        if (EditCompanyInfo != null)
+        {
+            bool success = await CompanyService.UpdateCompanyAsync(EditCompanyInfo);
+            if (success)
+            {
+                Companies = await CompanyService.GetCompanyAsync();
+                EditCompanyInfo = null;
+            }
+            else
+            {
+            }
+        }
+    }
+
+    void CancelEdit()
+    {
+        EditCompanyInfo = null;
+    }
+
+    async Task DeleteCompany(string companyId)
+    {
+        bool success = await CompanyService.DeleteCompanyAsync(companyId);
+        if (success)
+        {
+            Companies = await CompanyService.GetCompanyAsync();
+        }
+        else
+        {
+        }
+    }
+}

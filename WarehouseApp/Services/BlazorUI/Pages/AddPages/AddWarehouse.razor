@@ -1,0 +1,28 @@
+@page "/add/1"
+@using DataServices.Data
+@inject IWarehouse IWarehouse
+@inject NavigationManager NavigationManager
+
+<h3>Add Warehouse</h3>
+
+@code {
+    private WarehouseInfo warehouse = new WarehouseInfo();
+
+    private async Task SaveWarehouse()
+    {
+        await IWarehouse.AddWarehouseAsync(warehouse);
+        NavigationManager.NavigateTo("/add");
+    }
+}
+
+<div class="form-group">
+    <label for="warehouseId">Warehouse ID:</label>
+    <input id="warehouseId" class="form-control" @bind="warehouse.WarehouseId">
+</div>
+
+<div class="form-group">
+    <label for="warehouseName">Warehouse Name:</label>
+    <input id="warehouseName" class="form-control" @bind="warehouse.WarehouseName">
+</div>
+
+<button class="btn btn-primary" @onclick="SaveWarehouse">Save</button>

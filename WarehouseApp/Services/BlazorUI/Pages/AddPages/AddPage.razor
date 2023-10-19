@@ -1,0 +1,48 @@
+@page "/add"
+@inject NavigationManager NavigationManager
+
+<button @onclick="NavigateToCompanyPage" class="btn btn-primary">Company</button>
+<button @onclick="NavigateToCountryPage" class="btn btn-primary">Country</button>
+<button @onclick="NavigateToTaxOfficePage" class="btn btn-primary">Tax Office</button>
+<button @onclick="NavigateToWarehousePage" class="btn btn-primary">Warehouse</button>
+<button @onclick="NavigateToHallwayPage" class="btn btn-primary">Hallway</button>
+<button @onclick="NavigateToHallwayRowPage" class="btn btn-primary">Hallway Row</button>
+<button @onclick="NavigateToHallwayRowBinPage" class="btn btn-primary">Hallway Row Bin</button>
+
+
+@code {
+    private void NavigateToCompanyPage()
+    {
+        NavigationManager.NavigateTo("/add/4");
+    }
+
+    private void NavigateToCountryPage()
+    {
+        NavigationManager.NavigateTo("/add/3");
+    }
+
+    private void NavigateToTaxOfficePage()
+    {
+        NavigationManager.NavigateTo("/add/2");
+    }
+
+    private void NavigateToWarehousePage()
+    {
+        NavigationManager.NavigateTo("/add/1");
+    }
+
+        private void NavigateToHallwayPage()
+    {
+        NavigationManager.NavigateTo("/add/5");
+    }
+
+        private void NavigateToHallwayRowPage()
+    {
+        NavigationManager.NavigateTo("/add/6");
+    }
+
+        private void NavigateToHallwayRowBinPage()
+    {
+        NavigationManager.NavigateTo("/add/7");
+    }
+}

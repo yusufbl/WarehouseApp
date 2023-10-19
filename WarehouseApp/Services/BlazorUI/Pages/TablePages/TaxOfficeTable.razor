@@ -1,0 +1,99 @@
+@page "/tax-office-table"
+@using DataServices.Data
+@using Microsoft.AspNetCore.Components
+@inject ITaxOffice TaxOfficeService
+@using DataServices.Data
+
+<PageTitle>Tax Office Table</PageTitle>
+
+<h1>Tax Office Table</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tax Office Id</th>
+            <th>Tax Office Name</th>
+            <th>Country Code</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var taxoffice in TaxOffices)
+        {
+            <tr>
+                <td>@taxoffice.TaxOfficeId</td>
+                <td>@taxoffice.TaxOfficeName</td>
+                <td>@taxoffice.CountryCode</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => EditTaxOffice(taxoffice)">Edit</button>
+                    <button class="btn btn-warning" @onclick="() => DeleteTaxOffice(taxoffice.TaxOfficeId.ToString())">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (EditTaxOfficeInfo != null)
+{
+    <h2>Edit Tax Office</h2>
+    <form @onsubmit="UpdateTaxOffice">
+        <div class="form-group">
+            <label for="editTaxOfficeId">Tax Office ID:</label>
+            <input type="text" class="form-control" id="editTaxOfficeId" @bind="EditTaxOfficeInfo.TaxOfficeId" readonly />
+        </div>
+        <div class="form-group">
+            <label for="editTaxOfficeName">Tax Office Name:</label>
+            <input type="text" class="form-control" id="editTaxOfficeName" @bind="EditTaxOfficeInfo.TaxOfficeName" required />
+        </div>
+        <div class="form-group">
+            <label for="editCountryCode">Country Code:</label>
+            <input type="text" class="form-control" id="editCountryCode" @bind="EditTaxOfficeInfo.CountryCode" required />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+        </div>
+    </form>
+}
+
+@code {
+    List<TaxOfficeInfo> TaxOffices { get; set; }
+    TaxOfficeInfo EditTaxOfficeInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        TaxOffices = await TaxOfficeService.GetTaxOfficeAsync();
+    }
+
+    void EditTaxOffice(TaxOfficeInfo taxOffice)
+    {
+        EditTaxOfficeInfo = taxOffice;
+    }
+
+    async Task UpdateTaxOffice()
+    {
+        if (EditTaxOfficeInfo != null)
+        {
+            bool success = await TaxOfficeService.UpdateTaxOfficeAsync(EditTaxOfficeInfo);
+            if (success)
+            {
+                TaxOffices = await TaxOfficeService.GetTaxOfficeAsync();
+                EditTaxOfficeInfo = null;
+            }
+        }
+    }
+
+    void CancelEdit()
+    {
+        EditTaxOfficeInfo = null;
+    }
+
+    async Task DeleteTaxOffice(string TaxOfficeId)
+    {
+        bool success = await TaxOfficeService.DeleteTaxOfficeAsync(TaxOfficeId);
+        if (success)
+        {
+            TaxOffices = await TaxOfficeService.GetTaxOfficeAsync();
+        }
+    }
+}

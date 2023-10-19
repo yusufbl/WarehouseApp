@@ -1,0 +1,106 @@
+@page "/country-table"
+@using Mer.Data.Core.Models
+@using System.Collections.Generic
+@inject ICountry CountryService
+@inject IJSRuntime JSRuntime
+@using DataServices.Data
+
+<PageTitle>Country Table</PageTitle>
+
+<h1>Country Table</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Country Code</th>
+            <th>Country Name</th>
+            <th>Is Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var country in countries)
+        {
+            <tr>
+                <td>@country.CountryCode</td>
+                <td>@country.CountryName</td>
+                <td>@country.IsActive</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => EditCountry(country)">Edit</button>
+                    <button class="btn btn-warning" @onclick="() => DeleteCountry(country.CountryCode)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (EditCountryInfo != null)
+{
+    <h2>Edit Country</h2>
+    <form @onsubmit="UpdateCountry">
+        <div class="form-group">
+            <label for="editCountryCode">Country Code:</label>
+            <input type="text" class="form-control" id="editCountryCode" @bind="EditCountryInfo.CountryCode" readonly />
+        </div>
+        <div class="form-group">
+            <label for="editCountryName">Country Name:</label>
+            <input type="text" class="form-control" id="editCountryName" @bind="EditCountryInfo.CountryName" required />
+        </div>
+        <div class="form-group">
+            <label for="editIsActive">Is Active:</label>
+            <input type="text" class="form-control" id="editIsActive" @bind="EditCountryInfo.IsActive" required />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+        </div>
+    </form>
+}
+
+@code {
+    List<CountryInfo> countries { get; set; }
+    CountryInfo EditCountryInfo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        countries = await CountryService.GetCountryAsync();
+    }
+
+    void EditCountry(CountryInfo country)
+    {
+        EditCountryInfo = country;
+    }
+
+    async Task UpdateCountry()
+    {
+        if (EditCountryInfo != null)
+        {
+            bool success = await CountryService.UpdateCountryAsync(EditCountryInfo);
+            if (success)
+            {
+                countries = await CountryService.GetCountryAsync();
+                EditCountryInfo = null;
+            }
+            else
+            {
+            }
+        }
+    }
+
+    void CancelEdit()
+    {
+        EditCountryInfo = null;
+    }
+
+    async Task DeleteCountry(string countryCode)
+    {
+        bool success = await CountryService.DeleteCountryAsync(countryCode);
+        if (success)
+        {
+            countries = await CountryService.GetCountryAsync();
+        }
+        else
+        {
+        }
+    }
+}

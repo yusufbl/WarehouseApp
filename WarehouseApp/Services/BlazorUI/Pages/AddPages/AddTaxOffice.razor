@@ -1,0 +1,39 @@
+@page "/add/2"
+@using DataServices.Data
+@inject ITaxOffice ITaxOffice
+@inject NavigationManager NavigationManager
+
+
+<h3>Add Tax Office</h3>
+
+@code {
+    private TaxOfficeInfo taxoffice = new TaxOfficeInfo();
+
+    private async Task SaveTaxOffice()
+    {
+        await ITaxOffice.AddTaxOfficeAsync(taxoffice);
+        NavigationManager.NavigateTo("/add");
+    }
+}
+
+<div class="form-group">
+    <label for="taxofficeId">Warehouse ID:</label>
+    <input id="taxofficeId" class="form-control" @bind="taxoffice.TaxOfficeId">
+</div>
+
+<div class="form-group">
+    <label for="warehouseName">Warehouse Name:</label>
+    <input id="warehouseName" class="form-control" @bind="taxoffice.TaxOfficeName">
+</div>
+
+<div class="form-group">
+    <label for="countryCode">Country Code:</label>
+    <input id="CountryCode" class="form-control" @bind="taxoffice.TaxOfficeName">
+</div>
+
+
+<button class="btn btn-primary" @onclick="SaveTaxOffice">Save</button>
+
+
+
+
